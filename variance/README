@@ -1,0 +1,5 @@
+run 
+python variance.py fullcolors
+
+or 
+python variance.py reducedcolors

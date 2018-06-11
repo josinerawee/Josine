@@ -1,0 +1,11 @@
+to vizualize nearest neighours
+
+Run: 
+
+For all the colors:
+python3 viz.py fullcolors wordyouwantneigbhoursof numberofnearestneigbours 
+for example 
+python3 viz.py fullcolors dog 20
+
+for reduced colors:
+python3 viz.py reducedcolors dog 20
