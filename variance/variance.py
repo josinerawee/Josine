@@ -111,8 +111,8 @@ def main():
 
 	categoriesonlytop= list(set(topvariancecategories).difference(leastvariancecategories))
 	categoriesonlyleast=list(set(leastvariancecategories).difference(topvariancecategories))
-	print('categories with most variance:',categoriesonlytop)
-	print('categories with least variance:',categoriesonlyleast)
+	#print('categories with most variance:',categoriesonlytop)
+	#print('categories with least variance:',categoriesonlyleast)
 
 	# x_val= [x[0].lemma_names()[0] for x in leastvariance]
 	# y_val = [x[1] for x in leastvariance]
@@ -152,66 +152,96 @@ def main():
 						hypernyms=hypernyms=flatten(hypernyms)
 				if x in hypernyms:
 					hypernymdict[x].append(target)
-	
-	finaldictcolors={}
 
-	
-	for key, value in hypernymdict.iteritems():
-		colordict={}
-		vectors=[]
-		for i in value:
-			vectors.append(featuredict[i])
-		mean=np.mean(np.array(vectors),axis=0)
-		summean=sum(mean)
-		count=0
-		for c in colors: 
-			if mean[count]==0:
-				colordict[c]=0
-				count+=1
-			else:
-				colordict[c]=int((mean[count]/summean)*100)
-				count+=1
+					
 
-		finaldictcolors[key]=colordict
-
-
-	for key,value in finaldictcolors.iteritems():
-		pixels=[]
-		name=key
-		for key,value in finaldictcolors[key].iteritems():
-			for i in range(value):
-				if key =='color':
-					pass
-				elif key =='drab':
-					pixels.append((50, 113, 23))
-				elif key =='mint':
-					pixels.append((152,255,152))
-				elif key =='umber':
-					pixels.append((	99, 81, 71))
-				elif key =='sky':
-					pixels.append((135,206,250))
-				elif key =='rose':
-					pixels.append(((255, 0, 128)))
-				elif key =='fuschia':
-					pixels.append((202, 44, 146))
-				elif key =='peach':
-					pixels.append((255,218,185))
-				elif key=='mustard':
-					pixels.append((255, 219, 88))
-				elif key=='lilac':
-					pixels.append((200,162,200))
-				elif key =='mauve':
-					pixels.append((224, 176, 255))
-				elif key =='periwinkle':
-					pixels.append((195,205,230))
+					
+	#find for each category 5 hypernyms with most variance 
+	#distribution of colors per word
+	for key,value in hypernymdict.iteritems():
+		finaldictcolors={}
+		category=key
+		variancenew={}
+		for i in value: 
+			variancenew[i]=variancedict[i]
+		sortedvariancenew= sorted(variancenew.items(), key=operator.itemgetter(1))
+		hypernyms=sortedvariancenew[-5:]
+		
+		for x in hypernyms:
+			colordict={}
+			vector=featuredict[x[0]]
+			summean=sum(vector)
+			count=0
+			for c in colors: 
+				if vector[count]==0:
+					colordict[c]=0
+					count+=1
 				else:
-					pixels.append(name_to_rgb(key))
+					colordict[c]=int((vector[count]/summean)*100)
+					count+=1
 
-		size=int(math.sqrt(len(pixels)))+1
-		width=size*15
-		image=make_rainbow_rgb(pixels, width, size)
-		image.save(space+'viz/'+name+'.png')
+			finaldictcolors[x]=colordict
 
+	#distribution of colors per category
+
+	# for key, value in hypernymdict.iteritems():
+	# 	colordict={}
+	# 	vectors=[]
+	# 	for i in value:
+	# 		vectors.append(featuredict[i])
+	# 	mean=np.mean(np.array(vectors),axis=0)
+	# 	summean=sum(mean)
+	# 	count=0
+	# 	for c in colors: 
+	# 		if mean[count]==0:
+	# 			colordict[c]=0
+	# 			count+=1
+	# 		else:
+	# 			colordict[c]=int((mean[count]/summean)*100)
+	# 			count+=1
+
+	# 	finaldictcolors[key]=colordict
+
+
+		for key,value in finaldictcolors.iteritems():
+			pixels=[]
+			name=key
+			for key,value in finaldictcolors[key].iteritems():
+				for i in range(value):
+					if key =='color':
+						pass
+					elif key =='drab':
+						pixels.append((50, 113, 23))
+					elif key =='mint':
+						pixels.append((152,255,152))
+					elif key =='umber':
+						pixels.append((	99, 81, 71))
+					elif key =='sky':
+						pixels.append((135,206,250))
+					elif key =='rose':
+						pixels.append(((255, 0, 128)))
+					elif key =='fuschia':
+						pixels.append((202, 44, 146))
+					elif key =='peach':
+						pixels.append((255,218,185))
+					elif key=='mustard':
+						pixels.append((255, 219, 88))
+					elif key=='lilac':
+						pixels.append((200,162,200))
+					elif key =='mauve':
+						pixels.append((224, 176, 255))
+					elif key =='periwinkle':
+						pixels.append((195,205,230))
+					else:
+						pixels.append(name_to_rgb(key))
+
+			size=int(math.sqrt(len(pixels)))+1
+			width=size*15
+			image=make_rainbow_rgb(pixels, width, size)
+			try:
+				image.save('reducedcolorsviz/new/'+category+'/'+name[0]+'.png')
+			except UnicodeDecodeError:
+				pass
 
 
 
