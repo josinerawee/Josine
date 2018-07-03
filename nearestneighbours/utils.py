@@ -3,6 +3,7 @@ from math import sqrt
 from matplotlib import cm
 import pandas as pd
 from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
 
 def readDM(dm_file):
     dm_dict = {}
@@ -96,6 +97,7 @@ def run_PCAneighbours(dm_dict, words, savefile):
         labels.append(w)
         m.append(dm_dict[w])
     pca = PCA(n_components=2)
+    #m_2d=TSNE(n_components=2).fit_transform(m)
     pca.fit(m)
     m_2d = pca.transform(m)
     png = make_figure(m_2d,labels)
